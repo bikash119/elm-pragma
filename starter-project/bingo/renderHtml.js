@@ -8260,9 +8260,9 @@ var _user$project$RenderHtml$initialEntries = {
 		_1: {ctor: '[]'}
 	}
 };
-var _user$project$RenderHtml$intialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
+var _user$project$RenderHtml$initialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
 var _user$project$RenderHtml$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	_user$project$RenderHtml$view(_user$project$RenderHtml$intialModel));
+	_user$project$RenderHtml$view(_user$project$RenderHtml$initialModel));
 
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};

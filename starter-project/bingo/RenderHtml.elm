@@ -5,14 +5,15 @@ import Html.Attributes exposing (..)
 
 --MODEL
 
-intialModel = 
+initialModel : {name : String, gameNumber : Int, entries : List { id : Int, phrase : String, points : Int, marked : Bool} }
+initialModel = 
     {
         name = "mike"
     ,   gameNumber = 1
     ,   entries = initialEntries
     }
 
-
+initialEntries : List { id : Int, phrase : String, points : Int, marked : Bool}
 initialEntries =
     [
         {id = 1 ,phrase = "Future-proof", points=100, marked=False}
@@ -66,4 +67,4 @@ view model =
         ]
         
 main = 
-    view intialModel
+    view initialModel
