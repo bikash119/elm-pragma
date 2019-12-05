@@ -26,7 +26,7 @@ viewPlayer name gameNumber =
         h2 [id "info", class "classy"]
              [ playerInfoText ]
 
-
+--viewHeader, viewFooter, view are definitions as they do not take any value. You can't have a function with zero arguments in Elm
 viewHeader title= 
     header []
             [ h1 [] [ text title]]
