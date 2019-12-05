@@ -8213,27 +8213,56 @@ var _user$project$RenderHtml$viewPlayer = F2(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$RenderHtml$view = A2(
-	_elm_lang$html$Html$div,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('content'),
-		_1: {ctor: '[]'}
-	},
-	{
-		ctor: '::',
-		_0: _user$project$RenderHtml$viewHeader('Buzzword Bingo'),
-		_1: {
+var _user$project$RenderHtml$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
 			ctor: '::',
-			_0: A2(_user$project$RenderHtml$viewPlayer, 'Vaishnav', 4),
+			_0: _elm_lang$html$Html_Attributes$class('content'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _user$project$RenderHtml$viewHeader('Buzzword Bingo'),
 			_1: {
 				ctor: '::',
-				_0: _user$project$RenderHtml$viewFooter,
-				_1: {ctor: '[]'}
+				_0: A2(_user$project$RenderHtml$viewPlayer, model.name, model.gameNumber),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('debug'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								_elm_lang$core$Basics$toString(model)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _user$project$RenderHtml$viewFooter,
+						_1: {ctor: '[]'}
+					}
+				}
 			}
-		}
-	});
-var _user$project$RenderHtml$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(_user$project$RenderHtml$view);
+		});
+};
+var _user$project$RenderHtml$initialEntries = {
+	ctor: '::',
+	_0: {id: 1, phrase: 'Future-proof', points: 100, marked: false},
+	_1: {
+		ctor: '::',
+		_0: {id: 2, phrase: 'Doing Agile', points: 200, marked: false},
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$RenderHtml$intialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
+var _user$project$RenderHtml$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
+	_user$project$RenderHtml$view(_user$project$RenderHtml$intialModel));
 
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};

@@ -3,6 +3,24 @@ module RenderHtml exposing (..)
 import Html exposing (text, h2,header,h1,a,footer,text,div)
 import Html.Attributes exposing (..)
 
+--MODEL
+
+intialModel = 
+    {
+        name = "mike"
+    ,   gameNumber = 1
+    ,   entries = initialEntries
+    }
+
+
+initialEntries =
+    [
+        {id = 1 ,phrase = "Future-proof", points=100, marked=False}
+    ,   {id = 2 ,phrase = "Doing Agile", points=200, marked=False}
+    ]
+
+--VIEW
+
 playerInfo name gameNumber = 
     name ++ " - Game # " ++ (toString gameNumber)
 
@@ -39,12 +57,13 @@ viewFooter =
             ]
 
 
-view = 
+view model = 
     div [ class "content"]
         [ viewHeader "Buzzword Bingo"
-        ,viewPlayer "Vaishnav" 4
-        ,viewFooter 
+        , viewPlayer model.name model.gameNumber
+        , div [ class "debug"] [ text (toString model) ]
+        , viewFooter 
         ]
         
 main = 
-    view
+    view intialModel
