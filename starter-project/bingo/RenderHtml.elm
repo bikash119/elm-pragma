@@ -1,6 +1,6 @@
 module RenderHtml exposing (..)
 
-import Html exposing (text, h2)
+import Html exposing (text, h2,header,h1,a,footer,text,div)
 import Html.Attributes exposing (..)
 
 playerInfo name gameNumber = 
@@ -27,5 +27,24 @@ viewPlayer name gameNumber =
              [ playerInfoText ]
 
 
+viewHeader title= 
+    header []
+            [ h1 [] [ text title]]
+
+
+viewFooter =
+    footer []
+            [ a [ href "http://elm-lang.org" ]
+                [ text "Powered by me"]
+            ]
+
+
+view = 
+    div [ class "content"]
+        [ viewHeader "Buzzword Bingo"
+        ,viewPlayer "Vaishnav" 4
+        ,viewFooter 
+        ]
+        
 main = 
-    viewPlayer "Vaishnav" 4
+    view

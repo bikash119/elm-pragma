@@ -8145,6 +8145,42 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
+var _user$project$RenderHtml$viewFooter = A2(
+	_elm_lang$html$Html$footer,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$href('http://elm-lang.org'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Powered by me'),
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	});
+var _user$project$RenderHtml$viewHeader = function (title) {
+	return A2(
+		_elm_lang$html$Html$header,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(title),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$RenderHtml$playerInfo = F2(
 	function (name, gameNumber) {
 		return A2(
@@ -8177,8 +8213,27 @@ var _user$project$RenderHtml$viewPlayer = F2(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$RenderHtml$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	A2(_user$project$RenderHtml$viewPlayer, 'Vaishnav', 4));
+var _user$project$RenderHtml$view = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('content'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: _user$project$RenderHtml$viewHeader('Buzzword Bingo'),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$RenderHtml$viewPlayer, 'Vaishnav', 4),
+			_1: {
+				ctor: '::',
+				_0: _user$project$RenderHtml$viewFooter,
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+var _user$project$RenderHtml$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(_user$project$RenderHtml$view);
 
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};
