@@ -8155,14 +8155,11 @@ var _user$project$RenderHtml$playerInfo = F2(
 				' - Game # ',
 				_elm_lang$core$Basics$toString(gameNumber)));
 	});
-var _user$project$RenderHtml$playerInfoText = F2(
-	function (name, gameNumber) {
-		return _elm_lang$html$Html$text(
-			_elm_lang$core$String$toUpper(
-				A2(_user$project$RenderHtml$playerInfo, name, gameNumber)));
-	});
 var _user$project$RenderHtml$viewPlayer = F2(
 	function (name, gameNumber) {
+		var playerInfoText = _elm_lang$html$Html$text(
+			_elm_lang$core$String$toUpper(
+				A2(_user$project$RenderHtml$playerInfo, name, gameNumber)));
 		return A2(
 			_elm_lang$html$Html$h2,
 			{
@@ -8176,7 +8173,7 @@ var _user$project$RenderHtml$viewPlayer = F2(
 			},
 			{
 				ctor: '::',
-				_0: A2(_user$project$RenderHtml$playerInfoText, name, gameNumber),
+				_0: playerInfoText,
 				_1: {ctor: '[]'}
 			});
 	});

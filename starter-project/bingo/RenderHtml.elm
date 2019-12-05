@@ -7,10 +7,7 @@ playerInfo name gameNumber =
     name ++ " - Game # " ++ (toString gameNumber)
 
 
-playerInfoText name gameNumber =
-    playerInfo name gameNumber 
-        |> String.toUpper
-        |> text
+
 
 
 -- main = 
@@ -19,8 +16,15 @@ playerInfoText name gameNumber =
 --         [ playerInfoText "mike" 3]
 
 viewPlayer name gameNumber = 
-    h2 [id "info", class "classy"]
-         [ playerInfoText name gameNumber]
+    let
+        playerInfoText  =
+            playerInfo name gameNumber 
+                |> String.toUpper
+                |> text
+    in
+    
+        h2 [id "info", class "classy"]
+             [ playerInfoText ]
 
 
 main = 
