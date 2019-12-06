@@ -8145,6 +8145,121 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'checked',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'value',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
+
 var _user$project$RenderHtml$viewEntryItem = function (entry) {
 	return A2(
 		_elm_lang$html$Html$li,
@@ -8256,6 +8371,32 @@ var _user$project$RenderHtml$viewPlayer = F2(
 				_1: {ctor: '[]'}
 			});
 	});
+var _user$project$RenderHtml$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{gameNumber: model.gameNumber + 2});
+	});
+var _user$project$RenderHtml$initialEntries = {
+	ctor: '::',
+	_0: {id: 1, phrase: 'Future-proof', points: 100, marked: false},
+	_1: {
+		ctor: '::',
+		_0: {id: 2, phrase: 'Doing Agile', points: 200, marked: false},
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$RenderHtml$initialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
+var _user$project$RenderHtml$Entry = F4(
+	function (a, b, c, d) {
+		return {id: a, phrase: b, points: c, marked: d};
+	});
+var _user$project$RenderHtml$Model = F3(
+	function (a, b, c) {
+		return {name: a, gameNumber: b, entries: c};
+	});
+var _user$project$RenderHtml$NewGame = {ctor: 'NewGame'};
 var _user$project$RenderHtml$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8279,45 +8420,53 @@ var _user$project$RenderHtml$view = function (model) {
 							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('debug'),
+								_0: _elm_lang$html$Html_Attributes$class('button-group'),
 								_1: {ctor: '[]'}
 							},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(model)),
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$NewGame),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('NewGame'),
+										_1: {ctor: '[]'}
+									}),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
 							ctor: '::',
-							_0: _user$project$RenderHtml$viewFooter,
-							_1: {ctor: '[]'}
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('debug'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										_elm_lang$core$Basics$toString(model)),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _user$project$RenderHtml$viewFooter,
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}
 			}
 		});
 };
-var _user$project$RenderHtml$initialEntries = {
-	ctor: '::',
-	_0: {id: 1, phrase: 'Future-proof', points: 100, marked: false},
-	_1: {
-		ctor: '::',
-		_0: {id: 2, phrase: 'Doing Agile', points: 200, marked: false},
-		_1: {ctor: '[]'}
-	}
-};
-var _user$project$RenderHtml$initialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
-var _user$project$RenderHtml$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	_user$project$RenderHtml$view(_user$project$RenderHtml$initialModel));
-var _user$project$RenderHtml$Entry = F4(
-	function (a, b, c, d) {
-		return {id: a, phrase: b, points: c, marked: d};
-	});
-var _user$project$RenderHtml$Model = F3(
-	function (a, b, c) {
-		return {name: a, gameNumber: b, entries: c};
-	});
+var _user$project$RenderHtml$main = _elm_lang$html$Html$beginnerProgram(
+	{model: _user$project$RenderHtml$initialModel, view: _user$project$RenderHtml$view, update: _user$project$RenderHtml$update})();
 
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};
