@@ -8260,6 +8260,61 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$RenderHtml$viewScore = function (totalPoints) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('score'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('label'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Score'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('value'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(totalPoints)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$RenderHtml$totalPoints = function (entries) {
+	return _elm_lang$core$List$sum(
+		A2(
+			_elm_lang$core$List$map,
+			function (_) {
+				return _.points;
+			},
+			A2(
+				_elm_lang$core$List$filter,
+				function (_) {
+					return _.marked;
+				},
+				entries)));
+};
 var _user$project$RenderHtml$viewFooter = A2(
 	_elm_lang$html$Html$footer,
 	{ctor: '[]'},
@@ -8328,33 +8383,57 @@ var _user$project$RenderHtml$viewPlayer = F2(
 				_1: {ctor: '[]'}
 			});
 	});
+var _user$project$RenderHtml$allEntriesMarked = function (entries) {
+	var marked = function (e) {
+		return e.marked;
+	};
+	return A2(_elm_lang$core$List$all, marked, entries);
+};
 var _user$project$RenderHtml$initialEntries = {
 	ctor: '::',
-	_0: {id: 1, phrase: 'Future-proof', points: 100, marked: false},
+	_0: {id: 1, phrase: 'Future-proof', points: 200, marked: false},
 	_1: {
 		ctor: '::',
-		_0: {id: 2, phrase: 'Doing Agile', points: 200, marked: false},
-		_1: {ctor: '[]'}
+		_0: {id: 2, phrase: 'Doing Agile', points: 400, marked: false},
+		_1: {
+			ctor: '::',
+			_0: {id: 3, phrase: 'Rock-Star Ninja', points: 100, marked: false},
+			_1: {
+				ctor: '::',
+				_0: {id: 4, phrase: 'In The Cloud', points: 300, marked: false},
+				_1: {ctor: '[]'}
+			}
+		}
 	}
 };
 var _user$project$RenderHtml$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'NewGame') {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{gameNumber: model.gameNumber + 1, entries: _user$project$RenderHtml$initialEntries});
-		} else {
-			var markEntry = function (e) {
-				return _elm_lang$core$Native_Utils.eq(e.id, _p0._0) ? _elm_lang$core$Native_Utils.update(
-					e,
-					{marked: !e.marked}) : e;
-			};
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{
-					entries: A2(_elm_lang$core$List$map, markEntry, model.entries)
-				});
+		switch (_p0.ctor) {
+			case 'NewGame':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{gameNumber: model.gameNumber + 1, entries: _user$project$RenderHtml$initialEntries});
+			case 'Mark':
+				var markEntry = function (e) {
+					return _elm_lang$core$Native_Utils.eq(e.id, _p0._0) ? _elm_lang$core$Native_Utils.update(
+						e,
+						{marked: !e.marked}) : e;
+				};
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						entries: A2(_elm_lang$core$List$map, markEntry, model.entries)
+					});
+			default:
+				var sortByPoints = function (e) {
+					return e.points;
+				};
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						entries: A2(_elm_lang$core$List$sortBy, sortByPoints, model.entries)
+					});
 		}
 	});
 var _user$project$RenderHtml$initialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
@@ -8366,6 +8445,7 @@ var _user$project$RenderHtml$Model = F3(
 	function (a, b, c) {
 		return {name: a, gameNumber: b, entries: c};
 	});
+var _user$project$RenderHtml$Sort = {ctor: 'Sort'};
 var _user$project$RenderHtml$Mark = function (a) {
 	return {ctor: 'Mark', _0: a};
 };
@@ -8446,48 +8526,79 @@ var _user$project$RenderHtml$view = function (model) {
 					_0: _user$project$RenderHtml$viewEntries(model.entries),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('button-group'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$button,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$NewGame),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('NewGame'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}),
+						_0: _user$project$RenderHtml$viewScore(
+							_user$project$RenderHtml$totalPoints(model.entries)),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$div,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('debug'),
+									_0: _elm_lang$html$Html_Attributes$class('button-group'),
 									_1: {ctor: '[]'}
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(
-										_elm_lang$core$Basics$toString(model)),
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$NewGame),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('NewGame'),
+											_1: {ctor: '[]'}
+										}),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
 								ctor: '::',
-								_0: _user$project$RenderHtml$viewFooter,
-								_1: {ctor: '[]'}
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('button-group'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$button,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$Sort),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Sort'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('debug'),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												_elm_lang$core$Basics$toString(model)),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: _user$project$RenderHtml$viewFooter,
+										_1: {ctor: '[]'}
+									}
+								}
 							}
 						}
 					}

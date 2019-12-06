@@ -3,6 +3,7 @@ module RenderHtml exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing(onClick)
+import List exposing (sortBy )
 
 --MODEL
 
@@ -31,13 +32,23 @@ initialModel =
 initialEntries : List { id : Int, phrase : String, points : Int, marked : Bool}
 initialEntries =
     [
-        {id = 1 ,phrase = "Future-proof", points=100, marked=False}
-    ,   {id = 2 ,phrase = "Doing Agile", points=200, marked=False}
+        {id = 1 ,phrase = "Future-proof", points=200, marked=False}
+    ,   {id = 2 ,phrase = "Doing Agile", points=400, marked=False}
+    ,   {id = 3 ,phrase = "Rock-Star Ninja", points=100, marked=False}
+    ,   {id = 4 ,phrase = "In The Cloud", points=300, marked=False}
     ]
 
 --update
 
-type Msg = NewGame | Mark Int
+type Msg = NewGame | Mark Int | Sort
+
+allEntriesMarked : List Entry -> Bool
+allEntriesMarked entries =
+    let
+        marked e = e.marked
+    in
+        List.all marked entries
+
 
 update : Msg -> Model -> Model
 update msg model =
@@ -56,7 +67,12 @@ update msg model =
 
             in
                 { model | entries = List.map markEntry model.entries}
-
+        Sort ->
+            let
+                sortByPoints e =
+                    e.points
+            in
+                { model | entries = List.sortBy  sortByPoints model.entries}
 --VIEW
 
 playerInfo name gameNumber = 
@@ -101,6 +117,21 @@ viewEntryItem entry =
         , span [ class "points" ] [text (toString entry.points)]
         ]
 
+totalPoints : List Entry -> Int
+totalPoints entries =
+    entries
+        |> List.filter .marked
+        |> List.map .points
+        |> List.sum 
+
+
+viewScore : Int -> Html.Html msg
+viewScore totalPoints =
+    div [ class "score" ] 
+        [
+            span [ class "label" ] [ text "Score"]
+        ,   span [ class "value" ] [ text (toString totalPoints) ]
+        ]
 
 viewEntries : List Entry -> Html.Html Msg
 viewEntries entries =
@@ -114,8 +145,11 @@ view model =
         [ viewHeader "Buzzword Bingo"
         , viewPlayer model.name model.gameNumber
         , viewEntries model.entries
+        , viewScore (totalPoints model.entries)
         , div [ class "button-group"]
               [ button [ onClick NewGame ] [text "NewGame"] ]
+        , div [ class "button-group"]
+              [ button [ onClick Sort ] [ text "Sort" ] ]
         , div [ class "debug"] [ text (toString model) ]
         , viewFooter 
         ]
