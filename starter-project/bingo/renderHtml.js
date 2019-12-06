@@ -8260,49 +8260,6 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$RenderHtml$viewEntryItem = function (entry) {
-	return A2(
-		_elm_lang$html$Html$li,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$span,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('phrase'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(entry.phrase),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$span,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('points'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(entry.points)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _user$project$RenderHtml$viewEntries = function (entries) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _user$project$RenderHtml$viewEntryItem, entries));
-};
 var _user$project$RenderHtml$viewFooter = A2(
 	_elm_lang$html$Html$footer,
 	{ctor: '[]'},
@@ -8371,13 +8328,6 @@ var _user$project$RenderHtml$viewPlayer = F2(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$RenderHtml$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{gameNumber: model.gameNumber + 2});
-	});
 var _user$project$RenderHtml$initialEntries = {
 	ctor: '::',
 	_0: {id: 1, phrase: 'Future-proof', points: 100, marked: false},
@@ -8387,6 +8337,26 @@ var _user$project$RenderHtml$initialEntries = {
 		_1: {ctor: '[]'}
 	}
 };
+var _user$project$RenderHtml$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'NewGame') {
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{gameNumber: model.gameNumber + 1, entries: _user$project$RenderHtml$initialEntries});
+		} else {
+			var markEntry = function (e) {
+				return _elm_lang$core$Native_Utils.eq(e.id, _p0._0) ? _elm_lang$core$Native_Utils.update(
+					e,
+					{marked: !e.marked}) : e;
+			};
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{
+					entries: A2(_elm_lang$core$List$map, markEntry, model.entries)
+				});
+		}
+	});
 var _user$project$RenderHtml$initialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
 var _user$project$RenderHtml$Entry = F4(
 	function (a, b, c, d) {
@@ -8396,6 +8366,66 @@ var _user$project$RenderHtml$Model = F3(
 	function (a, b, c) {
 		return {name: a, gameNumber: b, entries: c};
 	});
+var _user$project$RenderHtml$Mark = function (a) {
+	return {ctor: 'Mark', _0: a};
+};
+var _user$project$RenderHtml$viewEntryItem = function (entry) {
+	return A2(
+		_elm_lang$html$Html$li,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'marked', _1: entry.marked},
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$RenderHtml$Mark(entry.id)),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('phrase'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(entry.phrase),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('points'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(entry.points)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$RenderHtml$viewEntries = function (entries) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _user$project$RenderHtml$viewEntryItem, entries));
+};
 var _user$project$RenderHtml$NewGame = {ctor: 'NewGame'};
 var _user$project$RenderHtml$view = function (model) {
 	return A2(
