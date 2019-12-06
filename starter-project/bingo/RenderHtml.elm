@@ -4,6 +4,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing(onClick)
 import List exposing (sortBy )
+import Random
+import Http
 
 --MODEL
 
@@ -26,21 +28,12 @@ initialModel =
     {
         name = "mike"
     ,   gameNumber = 1
-    ,   entries = initialEntries
+    ,   entries = []
     }
-
-initialEntries : List { id : Int, phrase : String, points : Int, marked : Bool}
-initialEntries =
-    [
-        {id = 1 ,phrase = "Future-proof", points=200, marked=False}
-    ,   {id = 2 ,phrase = "Doing Agile", points=400, marked=False}
-    ,   {id = 3 ,phrase = "Rock-Star Ninja", points=100, marked=False}
-    ,   {id = 4 ,phrase = "In The Cloud", points=300, marked=False}
-    ]
 
 --update
 
-type Msg = NewGame | Mark Int | Sort
+type Msg = NewGame | Mark Int | Sort | NewRandom Int | NewEntries (Result Http.Error String)
 
 allEntriesMarked : List Entry -> Bool
 allEntriesMarked entries =
@@ -50,13 +43,11 @@ allEntriesMarked entries =
         List.all marked entries
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model =
     case msg of
         NewGame ->
-            { model | gameNumber = model.gameNumber + 1 
-                    , entries = initialEntries
-            }
+            ({ model |  gameNumber = model.gameNumber + 1}, getEntries )
         Mark id ->
             let 
                 markEntry e =
@@ -66,13 +57,48 @@ update msg model =
                         e
 
             in
-                { model | entries = List.map markEntry model.entries}
+                ({ model | entries = List.map markEntry model.entries}, Cmd.none)
         Sort ->
             let
                 sortByPoints e =
                     e.points
             in
-                { model | entries = List.sortBy  sortByPoints model.entries}
+                ( { model | entries = List.sortBy  sortByPoints model.entries }, Cmd.none )
+                
+        NewRandom randomNumber ->
+            ( { model | gameNumber = randomNumber } , Cmd.none)
+        
+        NewEntries (Ok jsonString) ->
+            let
+                _ = Debug.log "it worked!" jsonString
+            in
+                (model, Cmd.none )
+        NewEntries (Err error) ->
+            let
+                _ = Debug.log "oops!" error
+            in
+                (model, Cmd.none)
+
+
+
+--COMMAND
+
+generateRandomNumber : Cmd Msg
+generateRandomNumber =
+    Random.generate  (\num -> NewRandom num)   (Random.int 1 100)
+
+entriesUrl : String
+entriesUrl =
+    "http://localhost:3000/random-entries"
+
+
+getEntries : Cmd Msg
+getEntries =
+--    Http.send NewEntries (Http.getString entriesUrl)
+    entriesUrl
+        |> Http.getString
+        |> Http.send NewEntries
+
 --VIEW
 
 playerInfo name gameNumber = 
@@ -119,10 +145,13 @@ viewEntryItem entry =
 
 totalPoints : List Entry -> Int
 totalPoints entries =
-    entries
-        |> List.filter .marked
-        |> List.map .points
-        |> List.sum 
+    let
+        squares x = x*x
+    in
+        entries
+            |> List.filter .marked
+            |> List.map .points
+            |> List.foldl (+) 0 
 
 
 viewScore : Int -> Html.Html msg
@@ -160,9 +189,10 @@ view model =
 
 main : Program Never Model Msg
 main =
-    Html.beginnerProgram
+    Html.program
     {
-        model = initialModel
+        init = ( initialModel, getEntries )
     ,   view = view
     ,   update = update
+    ,   subscriptions = (\_ -> Sub.none)
     }
