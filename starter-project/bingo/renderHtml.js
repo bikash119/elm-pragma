@@ -8183,11 +8183,10 @@ var _user$project$RenderHtml$viewEntryItem = function (entry) {
 		});
 };
 var _user$project$RenderHtml$viewEntries = function (entries) {
-	var listOfEntries = A2(_elm_lang$core$List$map, _user$project$RenderHtml$viewEntryItem, entries);
 	return A2(
 		_elm_lang$html$Html$ul,
 		{ctor: '[]'},
-		listOfEntries);
+		A2(_elm_lang$core$List$map, _user$project$RenderHtml$viewEntryItem, entries));
 };
 var _user$project$RenderHtml$viewFooter = A2(
 	_elm_lang$html$Html$footer,

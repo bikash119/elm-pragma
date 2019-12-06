@@ -81,11 +81,9 @@ viewEntryItem entry =
 
 viewEntries : List Entry -> Html.Html msg
 viewEntries entries =
-    let
-        listOfEntries = List.map viewEntryItem entries
-    in
-    
-        ul [] listOfEntries
+     entries 
+        |> List.map viewEntryItem
+        |> ul []
 
 view : Model -> Html.Html msg
 view model = 
