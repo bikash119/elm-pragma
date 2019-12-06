@@ -1,6 +1,6 @@
 module RenderHtml exposing (..)
 
-import Html exposing (text, h2,header,h1,a,footer,text,div)
+import Html exposing (..)
 import Html.Attributes exposing (..)
 
 --MODEL
@@ -71,11 +71,28 @@ viewFooter =
                 [ text "Powered by me"]
             ]
 
+viewEntryItem : Entry -> Html.Html msg
+viewEntryItem entry =
+    li []
+        [ span [ class "phrase" ] [text entry.phrase]
+        , span [ class "points" ] [text (toString entry.points)]
+        ]
+
+
+viewEntries : List Entry -> Html.Html msg
+viewEntries entries =
+    let
+        listOfEntries = List.map viewEntryItem entries
+    in
+    
+        ul [] listOfEntries
+
 view : Model -> Html.Html msg
 view model = 
     div [ class "content"]
         [ viewHeader "Buzzword Bingo"
         , viewPlayer model.name model.gameNumber
+        , viewEntries model.entries
         , div [ class "debug"] [ text (toString model) ]
         , viewFooter 
         ]

@@ -8145,6 +8145,50 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
+var _user$project$RenderHtml$viewEntryItem = function (entry) {
+	return A2(
+		_elm_lang$html$Html$li,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('phrase'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(entry.phrase),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('points'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(entry.points)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$RenderHtml$viewEntries = function (entries) {
+	var listOfEntries = A2(_elm_lang$core$List$map, _user$project$RenderHtml$viewEntryItem, entries);
+	return A2(
+		_elm_lang$html$Html$ul,
+		{ctor: '[]'},
+		listOfEntries);
+};
 var _user$project$RenderHtml$viewFooter = A2(
 	_elm_lang$html$Html$footer,
 	{ctor: '[]'},
@@ -8229,23 +8273,27 @@ var _user$project$RenderHtml$view = function (model) {
 				_0: A2(_user$project$RenderHtml$viewPlayer, model.name, model.gameNumber),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('debug'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								_elm_lang$core$Basics$toString(model)),
-							_1: {ctor: '[]'}
-						}),
+					_0: _user$project$RenderHtml$viewEntries(model.entries),
 					_1: {
 						ctor: '::',
-						_0: _user$project$RenderHtml$viewFooter,
-						_1: {ctor: '[]'}
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('debug'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(model)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _user$project$RenderHtml$viewFooter,
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}
