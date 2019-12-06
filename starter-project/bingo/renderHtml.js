@@ -8263,6 +8263,14 @@ var _user$project$RenderHtml$initialEntries = {
 var _user$project$RenderHtml$initialModel = {name: 'mike', gameNumber: 1, entries: _user$project$RenderHtml$initialEntries};
 var _user$project$RenderHtml$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
 	_user$project$RenderHtml$view(_user$project$RenderHtml$initialModel));
+var _user$project$RenderHtml$Entry = F4(
+	function (a, b, c, d) {
+		return {id: a, phrase: b, points: c, marked: d};
+	});
+var _user$project$RenderHtml$Model = F3(
+	function (a, b, c) {
+		return {name: a, gameNumber: b, entries: c};
+	});
 
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};

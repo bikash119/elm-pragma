@@ -5,7 +5,21 @@ import Html.Attributes exposing (..)
 
 --MODEL
 
-initialModel : {name : String, gameNumber : Int, entries : List { id : Int, phrase : String, points : Int, marked : Bool} }
+
+type alias Entry = 
+    { id : Int
+    , phrase : String
+    , points : Int
+    , marked : Bool
+    }
+
+type alias Model = 
+    { name : String
+    , gameNumber : Int
+    , entries : List Entry 
+    }
+
+initialModel : Model
 initialModel = 
     {
         name = "mike"
@@ -57,7 +71,7 @@ viewFooter =
                 [ text "Powered by me"]
             ]
 
-
+view : Model -> Html.Html msg
 view model = 
     div [ class "content"]
         [ viewHeader "Buzzword Bingo"
