@@ -7,9 +7,15 @@ import List exposing (sortBy )
 import Random
 import Http
 import Json.Decode as Decode exposing (Decoder, field, succeed)
+import Json.Encode as Encode
 
 --MODEL
 
+type alias Score = 
+    { id : Int
+    , name : String
+    , score : Int
+    }
 
 type alias Entry = 
     { id : Int
@@ -31,12 +37,20 @@ initialModel =
         name = "mike"
     ,   gameNumber = 1
     ,   entries = []
-    ,   alertMessage = Just "oops!"
+    ,   alertMessage = Nothing
     }
 
 --update
 
-type Msg = NewGame | Mark Int | Sort | NewRandom Int | NewEntries (Result Http.Error (List Entry))
+type Msg 
+    = NewGame 
+    | Mark Int 
+    | Sort 
+    | NewRandom Int 
+    | NewEntries (Result Http.Error (List Entry))
+    | CloseAlert
+    | ShareScore
+    | NewScore (Result Http.Error Score)
 
 allEntriesMarked : List Entry -> Bool
 allEntriesMarked entries =
@@ -49,6 +63,23 @@ allEntriesMarked entries =
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model =
     case msg of
+        ShareScore ->
+            (model, postScore model)
+        NewScore ( Ok score) ->
+            let
+                message = 
+                    "Your score of"
+                        ++ (toString score.score)
+                        ++ " was successfully shared"
+            in
+                ( { model | alertMessage = Just message} , Cmd.none)
+        NewScore ( Err error) ->
+            let
+                message = 
+                    "Error posting your "
+                        ++ (toString error)
+            in
+                ( { model | alertMessage = Just message} , Cmd.none)
         NewGame ->
             ({ model |  gameNumber = model.gameNumber + 1}, getEntries )
         Mark id ->
@@ -75,11 +106,22 @@ update msg model =
                 ({model | entries = randomEntries}, Cmd.none )
         NewEntries (Err error) ->
             let
-                _ = Debug.log "oops!" error
+                errorMessage = 
+                    case error of
+                        Http.NetworkError ->
+                            "Is the server running"
+                        Http.BadStatus response ->
+                            (toString response.status)
+                        Http.BadPayload message _->
+                            "Decoding failed" ++ message
+                        _ ->
+                            (toString error)
             in
-                (model, Cmd.none)
+                ( {model | alertMessage = Just errorMessage }, Cmd.none)
+        closeAlert ->
+            ( { model | alertMessage = Nothing}, Cmd.none )
 
---DECODERS
+--DECODERS / ENCODERS
 
 entryDecoder : Decoder Entry
 entryDecoder = 
@@ -88,6 +130,18 @@ entryDecoder =
         (field "phrase" Decode.string)
         (field "points" Decode.int)
         (succeed False)
+scoreDecoder = 
+    Decode.map3 Score 
+        (field "id" Decode.int)
+        (field "name" Decode.string)
+        (field "score" Decode.int)
+
+encodeScore : Model -> Encode.Value
+encodeScore model =
+    Encode.object
+        [   ("name", Encode.string model.name)
+        ,   ("score" , Encode.int (totalPoints model.entries))
+        ]
 
 --COMMAND
 
@@ -100,12 +154,35 @@ entriesUrl =
     "http://localhost:3000/random-entries"
 
 
+postScore : Model -> Cmd Msg
+postScore model =
+    let
+        url = "http://localhost:3000/scores"
+
+        body = 
+            encodeScore model
+                |> Http.jsonBody
+ 
+        request =
+            Http.post url body scoreDecoder
+    in
+        Http.send NewScore request
+
 getEntries : Cmd Msg
 getEntries =
 --    Http.send NewEntries (Http.getString entriesUrl)
     (Decode.list entryDecoder)
         |> Http.get entriesUrl
         |> Http.send NewEntries
+
+hasZeroScore : Model -> Bool
+hasZeroScore model = 
+    -- case totalPoints model.entries of
+    --     0 ->
+    --         True
+    --     _ ->
+    --         False
+    totalPoints model.entries == 0
 
 --VIEW
 
@@ -185,9 +262,11 @@ view model =
         , viewEntries model.entries
         , viewScore (totalPoints model.entries)
         , div [ class "button-group"]
-              [ button [ onClick NewGame ] [text "NewGame"] ]
-        , div [ class "button-group"]
-              [ button [ onClick Sort ] [ text "Sort" ] ]
+              [ 
+                  button [ onClick NewGame ] [text "NewGame"]
+                , button [ onClick Sort ] [ text "Sort" ]
+                , button [ onClick ShareScore, disabled (hasZeroScore model) ] [ text "Share Score"]
+               ]
         , div [ class "debug"] [ text (toString model) ]
         , viewFooter 
         ]
@@ -196,7 +275,9 @@ viewAlertMessage alertMessage =
     case alertMessage of
         Just message ->
             div [ class "alert" ]
-                [ text message ]
+                [   span [ class "close", onClick CloseAlert ] [ text "X"]
+                ,   text message 
+                ]
         Nothing ->
             text ""
         
