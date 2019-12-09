@@ -13537,10 +13537,11 @@ var _user$project$RenderHtml$allEntriesMarked = function (entries) {
 	return A2(_elm_lang$core$List$all, marked, entries);
 };
 var _user$project$RenderHtml$initialModel = {
-	name: 'mike',
+	name: 'Anonymous',
 	gameNumber: 1,
 	entries: {ctor: '[]'},
-	alertMessage: _elm_lang$core$Maybe$Nothing
+	alertMessage: _elm_lang$core$Maybe$Nothing,
+	nameInput: ''
 };
 var _user$project$RenderHtml$Score = F3(
 	function (a, b, c) {
@@ -13563,10 +13564,82 @@ var _user$project$RenderHtml$entryDecoder = A5(
 	A2(_elm_lang$core$Json_Decode$field, 'phrase', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'points', _elm_lang$core$Json_Decode$int),
 	_elm_lang$core$Json_Decode$succeed(false));
-var _user$project$RenderHtml$Model = F4(
-	function (a, b, c, d) {
-		return {name: a, gameNumber: b, entries: c, alertMessage: d};
+var _user$project$RenderHtml$Model = F5(
+	function (a, b, c, d, e) {
+		return {name: a, gameNumber: b, entries: c, alertMessage: d, nameInput: e};
 	});
+var _user$project$RenderHtml$CancelName = {ctor: 'CancelName'};
+var _user$project$RenderHtml$SaveName = {ctor: 'SaveName'};
+var _user$project$RenderHtml$SetNameInput = function (a) {
+	return {ctor: 'SetNameInput', _0: a};
+};
+var _user$project$RenderHtml$viewNameInput = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('name-input'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$input,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$type_('text'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$placeholder('who\'s playing?'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$autofocus(true),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$RenderHtml$SetNameInput),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$value(model.nameInput),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$SaveName),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Save'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$CancelName),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Cancel'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
 var _user$project$RenderHtml$NewScore = function (a) {
 	return {ctor: 'NewScore', _0: a};
 };
@@ -13631,6 +13704,30 @@ var _user$project$RenderHtml$update = F2(
 	function (msg, model) {
 		var _p1 = msg;
 		switch (_p1.ctor) {
+			case 'SaveName':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{name: model.nameInput, nameInput: ''}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'CancelName':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{nameInput: ''}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SetNameInput':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{nameInput: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'ShareScore':
 				return {
 					ctor: '_Tuple2',
@@ -13845,49 +13942,38 @@ var _user$project$RenderHtml$view = function (model) {
 				_0: A2(_user$project$RenderHtml$viewPlayer, model.name, model.gameNumber),
 				_1: {
 					ctor: '::',
-					_0: _user$project$RenderHtml$viewAlertMessage(model.alertMessage),
+					_0: _user$project$RenderHtml$viewNameInput(model),
 					_1: {
 						ctor: '::',
-						_0: _user$project$RenderHtml$viewEntries(model.entries),
+						_0: _user$project$RenderHtml$viewAlertMessage(model.alertMessage),
 						_1: {
 							ctor: '::',
-							_0: _user$project$RenderHtml$viewScore(
-								_user$project$RenderHtml$totalPoints(model.entries)),
+							_0: _user$project$RenderHtml$viewEntries(model.entries),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('button-group'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$button,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$NewGame),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text('NewGame'),
-												_1: {ctor: '[]'}
-											}),
-										_1: {
+								_0: _user$project$RenderHtml$viewScore(
+									_user$project$RenderHtml$totalPoints(model.entries)),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('button-group'),
+											_1: {ctor: '[]'}
+										},
+										{
 											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$button,
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$Sort),
+													_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$NewGame),
 													_1: {ctor: '[]'}
 												},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('Sort'),
+													_0: _elm_lang$html$Html$text('NewGame'),
 													_1: {ctor: '[]'}
 												}),
 											_1: {
@@ -13896,42 +13982,57 @@ var _user$project$RenderHtml$view = function (model) {
 													_elm_lang$html$Html$button,
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$ShareScore),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$disabled(
-																_user$project$RenderHtml$hasZeroScore(model)),
-															_1: {ctor: '[]'}
-														}
+														_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$Sort),
+														_1: {ctor: '[]'}
 													},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('Share Score'),
+														_0: _elm_lang$html$Html$text('Sort'),
 														_1: {ctor: '[]'}
 													}),
-												_1: {ctor: '[]'}
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$button,
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$ShareScore),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$disabled(
+																	_user$project$RenderHtml$hasZeroScore(model)),
+																_1: {ctor: '[]'}
+															}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Share Score'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
 											}
-										}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$div,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class('debug'),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model)),
-											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
-										_0: _user$project$RenderHtml$viewFooter,
-										_1: {ctor: '[]'}
+										_0: A2(
+											_elm_lang$html$Html$div,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class('debug'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(
+													_elm_lang$core$Basics$toString(model)),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: _user$project$RenderHtml$viewFooter,
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
@@ -13954,7 +14055,7 @@ var _user$project$RenderHtml$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};
 if (typeof _user$project$RenderHtml$main !== 'undefined') {
-    _user$project$RenderHtml$main(Elm['RenderHtml'], 'RenderHtml', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"RenderHtml.Msg":{"args":[],"tags":{"NewRandom":["Int"],"NewGame":[],"Mark":["Int"],"CloseAlert":[],"NewEntries":["Result.Result Http.Error (List RenderHtml.Entry)"],"NewScore":["Result.Result Http.Error RenderHtml.Score"],"Sort":[],"ShareScore":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"RenderHtml.Entry":{"args":[],"type":"{ id : Int, phrase : String, points : Int, marked : Bool }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"RenderHtml.Score":{"args":[],"type":"{ id : Int, name : String, score : Int }"}},"message":"RenderHtml.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$RenderHtml$main(Elm['RenderHtml'], 'RenderHtml', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"RenderHtml.Msg":{"args":[],"tags":{"NewRandom":["Int"],"NewGame":[],"Mark":["Int"],"CloseAlert":[],"NewEntries":["Result.Result Http.Error (List RenderHtml.Entry)"],"NewScore":["Result.Result Http.Error RenderHtml.Score"],"Sort":[],"ShareScore":[],"SetNameInput":["String"],"SaveName":[],"CancelName":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"RenderHtml.Entry":{"args":[],"type":"{ id : Int, phrase : String, points : Int, marked : Bool }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"RenderHtml.Score":{"args":[],"type":"{ id : Int, name : String, score : Int }"}},"message":"RenderHtml.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

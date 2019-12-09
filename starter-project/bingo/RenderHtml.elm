@@ -2,7 +2,7 @@ module RenderHtml exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing(onClick)
+import Html.Events exposing(onClick, onInput)
 import List exposing (sortBy )
 import Random
 import Http
@@ -29,15 +29,17 @@ type alias Model =
     , gameNumber : Int
     , entries : List Entry 
     , alertMessage: Maybe String
+    , nameInput: String
     }
 
 initialModel : Model
 initialModel = 
     {
-        name = "mike"
+        name = "Anonymous"
     ,   gameNumber = 1
     ,   entries = []
     ,   alertMessage = Nothing
+    ,   nameInput = ""
     }
 
 --update
@@ -51,6 +53,9 @@ type Msg
     | CloseAlert
     | ShareScore
     | NewScore (Result Http.Error Score)
+    | SetNameInput String
+    | SaveName 
+    | CancelName
 
 allEntriesMarked : List Entry -> Bool
 allEntriesMarked entries =
@@ -63,6 +68,12 @@ allEntriesMarked entries =
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model =
     case msg of
+        SaveName ->
+            ( { model | name = model.nameInput, nameInput = "" }, Cmd.none)
+        CancelName -> 
+            ( { model | nameInput = ""}, Cmd.none )
+        SetNameInput value ->
+            ( {model | nameInput = value} , Cmd.none)
         ShareScore ->
             (model, postScore model)
         NewScore ( Ok score) ->
@@ -258,6 +269,7 @@ view model =
     div [ class "content"]
         [ viewHeader "Buzzword Bingo"
         , viewPlayer model.name model.gameNumber
+        , viewNameInput model
         , viewAlertMessage model.alertMessage
         , viewEntries model.entries
         , viewScore (totalPoints model.entries)
@@ -270,6 +282,22 @@ view model =
         , div [ class "debug"] [ text (toString model) ]
         , viewFooter 
         ]
+
+viewNameInput : Model -> Html Msg
+viewNameInput model =
+    div [ class "name-input" ]
+        [ input 
+            [ type_ "text"
+            , placeholder "who's playing?"
+            , autofocus True
+            , onInput SetNameInput
+            , value model.nameInput
+            ] 
+            []
+        , button [ onClick SaveName] [ text "Save"] 
+        , button [ onClick CancelName ] [ text "Cancel"]   
+        ]
+
 viewAlertMessage : Maybe String -> Html Msg
 viewAlertMessage alertMessage = 
     case alertMessage of
