@@ -13371,6 +13371,25 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _user$project$RenderHtml$viewAlertMessage = function (alertMessage) {
+	var _p0 = alertMessage;
+	if (_p0.ctor === 'Just') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('alert'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(_p0._0),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return _elm_lang$html$Html$text('');
+	}
+};
 var _user$project$RenderHtml$viewScore = function (totalPoints) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -13513,15 +13532,23 @@ var _user$project$RenderHtml$allEntriesMarked = function (entries) {
 var _user$project$RenderHtml$initialModel = {
 	name: 'mike',
 	gameNumber: 1,
-	entries: {ctor: '[]'}
+	entries: {ctor: '[]'},
+	alertMessage: _elm_lang$core$Maybe$Just('oops!')
 };
 var _user$project$RenderHtml$Entry = F4(
 	function (a, b, c, d) {
 		return {id: a, phrase: b, points: c, marked: d};
 	});
-var _user$project$RenderHtml$Model = F3(
-	function (a, b, c) {
-		return {name: a, gameNumber: b, entries: c};
+var _user$project$RenderHtml$entryDecoder = A5(
+	_elm_lang$core$Json_Decode$map4,
+	_user$project$RenderHtml$Entry,
+	A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'phrase', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'points', _elm_lang$core$Json_Decode$int),
+	_elm_lang$core$Json_Decode$succeed(false));
+var _user$project$RenderHtml$Model = F4(
+	function (a, b, c, d) {
+		return {name: a, gameNumber: b, entries: c, alertMessage: d};
 	});
 var _user$project$RenderHtml$NewEntries = function (a) {
 	return {ctor: 'NewEntries', _0: a};
@@ -13529,11 +13556,14 @@ var _user$project$RenderHtml$NewEntries = function (a) {
 var _user$project$RenderHtml$getEntries = A2(
 	_elm_lang$http$Http$send,
 	_user$project$RenderHtml$NewEntries,
-	_elm_lang$http$Http$getString(_user$project$RenderHtml$entriesUrl));
+	A2(
+		_elm_lang$http$Http$get,
+		_user$project$RenderHtml$entriesUrl,
+		_elm_lang$core$Json_Decode$list(_user$project$RenderHtml$entryDecoder)));
 var _user$project$RenderHtml$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
 			case 'NewGame':
 				return {
 					ctor: '_Tuple2',
@@ -13544,7 +13574,7 @@ var _user$project$RenderHtml$update = F2(
 				};
 			case 'Mark':
 				var markEntry = function (e) {
-					return _elm_lang$core$Native_Utils.eq(e.id, _p0._0) ? _elm_lang$core$Native_Utils.update(
+					return _elm_lang$core$Native_Utils.eq(e.id, _p1._0) ? _elm_lang$core$Native_Utils.update(
 						e,
 						{marked: !e.marked}) : e;
 				};
@@ -13575,15 +13605,20 @@ var _user$project$RenderHtml$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{gameNumber: _p0._0}),
+						{gameNumber: _p1._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				if (_p0._0.ctor === 'Ok') {
-					var _p1 = A2(_elm_lang$core$Debug$log, 'it worked!', _p0._0._0);
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				if (_p1._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{entries: _p1._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
 				} else {
-					var _p2 = A2(_elm_lang$core$Debug$log, 'oops!', _p0._0._0);
+					var _p2 = A2(_elm_lang$core$Debug$log, 'oops!', _p1._0._0);
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 		}
@@ -13675,36 +13710,14 @@ var _user$project$RenderHtml$view = function (model) {
 				_0: A2(_user$project$RenderHtml$viewPlayer, model.name, model.gameNumber),
 				_1: {
 					ctor: '::',
-					_0: _user$project$RenderHtml$viewEntries(model.entries),
+					_0: _user$project$RenderHtml$viewAlertMessage(model.alertMessage),
 					_1: {
 						ctor: '::',
-						_0: _user$project$RenderHtml$viewScore(
-							_user$project$RenderHtml$totalPoints(model.entries)),
+						_0: _user$project$RenderHtml$viewEntries(model.entries),
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('button-group'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$button,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$NewGame),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('NewGame'),
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								}),
+							_0: _user$project$RenderHtml$viewScore(
+								_user$project$RenderHtml$totalPoints(model.entries)),
 							_1: {
 								ctor: '::',
 								_0: A2(
@@ -13720,12 +13733,12 @@ var _user$project$RenderHtml$view = function (model) {
 											_elm_lang$html$Html$button,
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$Sort),
+												_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$NewGame),
 												_1: {ctor: '[]'}
 											},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('Sort'),
+												_0: _elm_lang$html$Html$text('NewGame'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {ctor: '[]'}
@@ -13736,19 +13749,45 @@ var _user$project$RenderHtml$view = function (model) {
 										_elm_lang$html$Html$div,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class('debug'),
+											_0: _elm_lang$html$Html_Attributes$class('button-group'),
 											_1: {ctor: '[]'}
 										},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model)),
+											_0: A2(
+												_elm_lang$html$Html$button,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$Sort),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Sort'),
+													_1: {ctor: '[]'}
+												}),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
-										_0: _user$project$RenderHtml$viewFooter,
-										_1: {ctor: '[]'}
+										_0: A2(
+											_elm_lang$html$Html$div,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class('debug'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(
+													_elm_lang$core$Basics$toString(model)),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: _user$project$RenderHtml$viewFooter,
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
@@ -13771,7 +13810,7 @@ var _user$project$RenderHtml$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};
 if (typeof _user$project$RenderHtml$main !== 'undefined') {
-    _user$project$RenderHtml$main(Elm['RenderHtml'], 'RenderHtml', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"RenderHtml.Msg":{"args":[],"tags":{"NewRandom":["Int"],"NewGame":[],"Mark":["Int"],"NewEntries":["Result.Result Http.Error String"],"Sort":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"}},"message":"RenderHtml.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$RenderHtml$main(Elm['RenderHtml'], 'RenderHtml', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"RenderHtml.Msg":{"args":[],"tags":{"NewRandom":["Int"],"NewGame":[],"Mark":["Int"],"NewEntries":["Result.Result Http.Error (List RenderHtml.Entry)"],"Sort":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"RenderHtml.Entry":{"args":[],"type":"{ id : Int, phrase : String, points : Int, marked : Bool }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"}},"message":"RenderHtml.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

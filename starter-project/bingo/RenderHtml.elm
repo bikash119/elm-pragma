@@ -6,6 +6,7 @@ import Html.Events exposing(onClick)
 import List exposing (sortBy )
 import Random
 import Http
+import Json.Decode as Decode exposing (Decoder, field, succeed)
 
 --MODEL
 
@@ -21,6 +22,7 @@ type alias Model =
     { name : String
     , gameNumber : Int
     , entries : List Entry 
+    , alertMessage: Maybe String
     }
 
 initialModel : Model
@@ -29,11 +31,12 @@ initialModel =
         name = "mike"
     ,   gameNumber = 1
     ,   entries = []
+    ,   alertMessage = Just "oops!"
     }
 
 --update
 
-type Msg = NewGame | Mark Int | Sort | NewRandom Int | NewEntries (Result Http.Error String)
+type Msg = NewGame | Mark Int | Sort | NewRandom Int | NewEntries (Result Http.Error (List Entry))
 
 allEntriesMarked : List Entry -> Bool
 allEntriesMarked entries =
@@ -68,18 +71,23 @@ update msg model =
         NewRandom randomNumber ->
             ( { model | gameNumber = randomNumber } , Cmd.none)
         
-        NewEntries (Ok jsonString) ->
-            let
-                _ = Debug.log "it worked!" jsonString
-            in
-                (model, Cmd.none )
+        NewEntries (Ok randomEntries) ->
+                ({model | entries = randomEntries}, Cmd.none )
         NewEntries (Err error) ->
             let
                 _ = Debug.log "oops!" error
             in
                 (model, Cmd.none)
 
+--DECODERS
 
+entryDecoder : Decoder Entry
+entryDecoder = 
+    Decode.map4 Entry 
+        (field "id" Decode.int)
+        (field "phrase" Decode.string)
+        (field "points" Decode.int)
+        (succeed False)
 
 --COMMAND
 
@@ -95,8 +103,8 @@ entriesUrl =
 getEntries : Cmd Msg
 getEntries =
 --    Http.send NewEntries (Http.getString entriesUrl)
-    entriesUrl
-        |> Http.getString
+    (Decode.list entryDecoder)
+        |> Http.get entriesUrl
         |> Http.send NewEntries
 
 --VIEW
@@ -173,6 +181,7 @@ view model =
     div [ class "content"]
         [ viewHeader "Buzzword Bingo"
         , viewPlayer model.name model.gameNumber
+        , viewAlertMessage model.alertMessage
         , viewEntries model.entries
         , viewScore (totalPoints model.entries)
         , div [ class "button-group"]
@@ -182,6 +191,14 @@ view model =
         , div [ class "debug"] [ text (toString model) ]
         , viewFooter 
         ]
+viewAlertMessage : Maybe String -> Html Msg
+viewAlertMessage alertMessage = 
+    case alertMessage of
+        Just message ->
+            div [ class "alert" ]
+                [ text message ]
+        Nothing ->
+            text ""
         
 -- main = 
 --     update NewGame initialModel
