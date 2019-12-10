@@ -13471,38 +13471,6 @@ var _user$project$RenderHtml$viewHeader = function (title) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$RenderHtml$playerInfo = F2(
-	function (name, gameNumber) {
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			name,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				' - Game # ',
-				_elm_lang$core$Basics$toString(gameNumber)));
-	});
-var _user$project$RenderHtml$viewPlayer = F2(
-	function (name, gameNumber) {
-		var playerInfoText = _elm_lang$html$Html$text(
-			_elm_lang$core$String$toUpper(
-				A2(_user$project$RenderHtml$playerInfo, name, gameNumber)));
-		return A2(
-			_elm_lang$html$Html$h2,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$id('info'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('classy'),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: playerInfoText,
-				_1: {ctor: '[]'}
-			});
-	});
 var _user$project$RenderHtml$hasZeroScore = function (model) {
 	return _elm_lang$core$Native_Utils.eq(
 		_user$project$RenderHtml$totalPoints(model.entries),
@@ -13536,13 +13504,6 @@ var _user$project$RenderHtml$allEntriesMarked = function (entries) {
 	};
 	return A2(_elm_lang$core$List$all, marked, entries);
 };
-var _user$project$RenderHtml$initialModel = {
-	name: 'Anonymous',
-	gameNumber: 1,
-	entries: {ctor: '[]'},
-	alertMessage: _elm_lang$core$Maybe$Nothing,
-	nameInput: ''
-};
 var _user$project$RenderHtml$Score = F3(
 	function (a, b, c) {
 		return {id: a, name: b, score: c};
@@ -13564,9 +13525,65 @@ var _user$project$RenderHtml$entryDecoder = A5(
 	A2(_elm_lang$core$Json_Decode$field, 'phrase', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'points', _elm_lang$core$Json_Decode$int),
 	_elm_lang$core$Json_Decode$succeed(false));
-var _user$project$RenderHtml$Model = F5(
-	function (a, b, c, d, e) {
-		return {name: a, gameNumber: b, entries: c, alertMessage: d, nameInput: e};
+var _user$project$RenderHtml$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {name: a, gameNumber: b, entries: c, alertMessage: d, nameInput: e, gameState: f};
+	});
+var _user$project$RenderHtml$Playing = {ctor: 'Playing'};
+var _user$project$RenderHtml$EditMode = {ctor: 'EditMode'};
+var _user$project$RenderHtml$initialModel = {
+	name: 'Anonymous',
+	gameNumber: 1,
+	entries: {ctor: '[]'},
+	alertMessage: _elm_lang$core$Maybe$Nothing,
+	nameInput: '',
+	gameState: _user$project$RenderHtml$EditMode
+};
+var _user$project$RenderHtml$SwitchGameState = function (a) {
+	return {ctor: 'SwitchGameState', _0: a};
+};
+var _user$project$RenderHtml$viewPlayer = F2(
+	function (name, gameNumber) {
+		return A2(
+			_elm_lang$html$Html$h2,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$id('info'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('classy'),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href('#'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_user$project$RenderHtml$SwitchGameState(_user$project$RenderHtml$EditMode)),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(name),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							' - Game #',
+							_elm_lang$core$Basics$toString(gameNumber))),
+					_1: {ctor: '[]'}
+				}
+			});
 	});
 var _user$project$RenderHtml$CancelName = {ctor: 'CancelName'};
 var _user$project$RenderHtml$SaveName = {ctor: 'SaveName'};
@@ -13574,71 +13591,83 @@ var _user$project$RenderHtml$SetNameInput = function (a) {
 	return {ctor: 'SetNameInput', _0: a};
 };
 var _user$project$RenderHtml$viewNameInput = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('name-input'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$input,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$type_('text'),
-					_1: {
+	var _p0 = model.gameState;
+	if (_p0.ctor === 'EditMode') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('name-input'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$placeholder('who\'s playing?'),
+						_0: _elm_lang$html$Html_Attributes$type_('text'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$autofocus(true),
+							_0: _elm_lang$html$Html_Attributes$placeholder('who\'s playing?'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onInput(_user$project$RenderHtml$SetNameInput),
+								_0: _elm_lang$html$Html_Attributes$autofocus(true),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$value(model.nameInput),
-									_1: {ctor: '[]'}
+									_0: _elm_lang$html$Html_Events$onInput(_user$project$RenderHtml$SetNameInput),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$value(model.nameInput),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
-					}
-				},
-				{ctor: '[]'}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$button,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$SaveName),
-						_1: {ctor: '[]'}
 					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Save'),
-						_1: {ctor: '[]'}
-					}),
+					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$button,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$CancelName),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$SaveName),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$disabled(
+									_elm_lang$core$String$isEmpty(model.nameInput) || (_elm_lang$core$Native_Utils.cmp(
+										_elm_lang$core$String$length(model.nameInput),
+										3) < 0)),
+								_1: {ctor: '[]'}
+							}
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Cancel'),
+							_0: _elm_lang$html$Html$text('Save'),
 							_1: {ctor: '[]'}
 						}),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_user$project$RenderHtml$CancelName),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Cancel'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
 				}
-			}
-		});
+			});
+	} else {
+		return _elm_lang$html$Html$text('');
+	}
 };
 var _user$project$RenderHtml$NewScore = function (a) {
 	return {ctor: 'NewScore', _0: a};
@@ -13653,8 +13682,8 @@ var _user$project$RenderHtml$postScore = function (model) {
 var _user$project$RenderHtml$ShareScore = {ctor: 'ShareScore'};
 var _user$project$RenderHtml$CloseAlert = {ctor: 'CloseAlert'};
 var _user$project$RenderHtml$viewAlertMessage = function (alertMessage) {
-	var _p0 = alertMessage;
-	if (_p0.ctor === 'Just') {
+	var _p1 = alertMessage;
+	if (_p1.ctor === 'Just') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -13682,7 +13711,7 @@ var _user$project$RenderHtml$viewAlertMessage = function (alertMessage) {
 					}),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(_p0._0),
+					_0: _elm_lang$html$Html$text(_p1._0),
 					_1: {ctor: '[]'}
 				}
 			});
@@ -13702,14 +13731,22 @@ var _user$project$RenderHtml$getEntries = A2(
 		_elm_lang$core$Json_Decode$list(_user$project$RenderHtml$entryDecoder)));
 var _user$project$RenderHtml$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
+			case 'SwitchGameState':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{gameState: _p2._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'SaveName':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{name: model.nameInput, nameInput: ''}),
+						{name: model.nameInput, nameInput: '', gameState: _user$project$RenderHtml$Playing}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'CancelName':
@@ -13717,7 +13754,7 @@ var _user$project$RenderHtml$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{nameInput: ''}),
+						{nameInput: '', gameState: _user$project$RenderHtml$EditMode}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SetNameInput':
@@ -13725,7 +13762,7 @@ var _user$project$RenderHtml$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{nameInput: _p1._0}),
+						{nameInput: _p2._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ShareScore':
@@ -13735,13 +13772,13 @@ var _user$project$RenderHtml$update = F2(
 					_1: _user$project$RenderHtml$postScore(model)
 				};
 			case 'NewScore':
-				if (_p1._0.ctor === 'Ok') {
+				if (_p2._0.ctor === 'Ok') {
 					var message = A2(
 						_elm_lang$core$Basics_ops['++'],
 						'Your score of',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p1._0._0.score),
+							_elm_lang$core$Basics$toString(_p2._0._0.score),
 							' was successfully shared'));
 					return {
 						ctor: '_Tuple2',
@@ -13756,7 +13793,7 @@ var _user$project$RenderHtml$update = F2(
 					var message = A2(
 						_elm_lang$core$Basics_ops['++'],
 						'Error posting your ',
-						_elm_lang$core$Basics$toString(_p1._0._0));
+						_elm_lang$core$Basics$toString(_p2._0._0));
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -13777,7 +13814,7 @@ var _user$project$RenderHtml$update = F2(
 				};
 			case 'Mark':
 				var markEntry = function (e) {
-					return _elm_lang$core$Native_Utils.eq(e.id, _p1._0) ? _elm_lang$core$Native_Utils.update(
+					return _elm_lang$core$Native_Utils.eq(e.id, _p2._0) ? _elm_lang$core$Native_Utils.update(
 						e,
 						{marked: !e.marked}) : e;
 				};
@@ -13808,31 +13845,31 @@ var _user$project$RenderHtml$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{gameNumber: _p1._0}),
+						{gameNumber: _p2._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'NewEntries':
-				if (_p1._0.ctor === 'Ok') {
+				if (_p2._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{entries: _p1._0._0}),
+							{entries: _p2._0._0}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
-					var _p3 = _p1._0._0;
+					var _p4 = _p2._0._0;
 					var errorMessage = function () {
-						var _p2 = _p3;
-						switch (_p2.ctor) {
+						var _p3 = _p4;
+						switch (_p3.ctor) {
 							case 'NetworkError':
 								return 'Is the server running';
 							case 'BadStatus':
-								return _elm_lang$core$Basics$toString(_p2._0.status);
+								return _elm_lang$core$Basics$toString(_p3._0.status);
 							case 'BadPayload':
-								return A2(_elm_lang$core$Basics_ops['++'], 'Decoding failed', _p2._0);
+								return A2(_elm_lang$core$Basics_ops['++'], 'Decoding failed', _p3._0);
 							default:
-								return _elm_lang$core$Basics$toString(_p3);
+								return _elm_lang$core$Basics$toString(_p4);
 						}
 					}();
 					return {
@@ -14047,7 +14084,7 @@ var _user$project$RenderHtml$main = _elm_lang$html$Html$program(
 		init: {ctor: '_Tuple2', _0: _user$project$RenderHtml$initialModel, _1: _user$project$RenderHtml$getEntries},
 		view: _user$project$RenderHtml$view,
 		update: _user$project$RenderHtml$update,
-		subscriptions: function (_p4) {
+		subscriptions: function (_p5) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
@@ -14055,7 +14092,7 @@ var _user$project$RenderHtml$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['RenderHtml'] = Elm['RenderHtml'] || {};
 if (typeof _user$project$RenderHtml$main !== 'undefined') {
-    _user$project$RenderHtml$main(Elm['RenderHtml'], 'RenderHtml', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"RenderHtml.Msg":{"args":[],"tags":{"NewRandom":["Int"],"NewGame":[],"Mark":["Int"],"CloseAlert":[],"NewEntries":["Result.Result Http.Error (List RenderHtml.Entry)"],"NewScore":["Result.Result Http.Error RenderHtml.Score"],"Sort":[],"ShareScore":[],"SetNameInput":["String"],"SaveName":[],"CancelName":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"RenderHtml.Entry":{"args":[],"type":"{ id : Int, phrase : String, points : Int, marked : Bool }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"RenderHtml.Score":{"args":[],"type":"{ id : Int, name : String, score : Int }"}},"message":"RenderHtml.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$RenderHtml$main(Elm['RenderHtml'], 'RenderHtml', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"RenderHtml.GameState":{"args":[],"tags":{"Playing":[],"EditMode":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"RenderHtml.Msg":{"args":[],"tags":{"NewRandom":["Int"],"NewGame":[],"Mark":["Int"],"CloseAlert":[],"NewEntries":["Result.Result Http.Error (List RenderHtml.Entry)"],"NewScore":["Result.Result Http.Error RenderHtml.Score"],"Sort":[],"ShareScore":[],"SwitchGameState":["RenderHtml.GameState"],"SetNameInput":["String"],"SaveName":[],"CancelName":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"RenderHtml.Entry":{"args":[],"type":"{ id : Int, phrase : String, points : Int, marked : Bool }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"RenderHtml.Score":{"args":[],"type":"{ id : Int, name : String, score : Int }"}},"message":"RenderHtml.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

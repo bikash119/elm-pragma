@@ -11,6 +11,8 @@ import Json.Encode as Encode
 
 --MODEL
 
+type GameState = EditMode | Playing
+
 type alias Score = 
     { id : Int
     , name : String
@@ -30,6 +32,7 @@ type alias Model =
     , entries : List Entry 
     , alertMessage: Maybe String
     , nameInput: String
+    , gameState: GameState
     }
 
 initialModel : Model
@@ -40,6 +43,7 @@ initialModel =
     ,   entries = []
     ,   alertMessage = Nothing
     ,   nameInput = ""
+    ,   gameState = EditMode
     }
 
 --update
@@ -56,6 +60,7 @@ type Msg
     | SetNameInput String
     | SaveName 
     | CancelName
+    | SwitchGameState GameState
 
 allEntriesMarked : List Entry -> Bool
 allEntriesMarked entries =
@@ -68,12 +73,17 @@ allEntriesMarked entries =
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model =
     case msg of
+        SwitchGameState state ->
+            ( {model | gameState = state}, Cmd.none )
         SaveName ->
-            ( { model | name = model.nameInput, nameInput = "" }, Cmd.none)
+            ( { model | name = model.nameInput 
+                        , nameInput = "" 
+                        , gameState = Playing}, Cmd.none)
         CancelName -> 
-            ( { model | nameInput = ""}, Cmd.none )
+            ( { model | nameInput = ""
+                        ,gameState = EditMode}, Cmd.none )
         SetNameInput value ->
-            ( {model | nameInput = value} , Cmd.none)
+            ( {model | nameInput = value } , Cmd.none)
         ShareScore ->
             (model, postScore model)
         NewScore ( Ok score) ->
@@ -195,13 +205,8 @@ hasZeroScore model =
     --         False
     totalPoints model.entries == 0
 
+    
 --VIEW
-
-playerInfo name gameNumber = 
-    name ++ " - Game # " ++ (toString gameNumber)
-
-
-
 
 
 -- main = 
@@ -210,15 +215,10 @@ playerInfo name gameNumber =
 --         [ playerInfoText "mike" 3]
 
 viewPlayer name gameNumber = 
-    let
-        playerInfoText  =
-            playerInfo name gameNumber 
-                |> String.toUpper
-                |> text
-    in
-    
-        h2 [id "info", class "classy"]
-             [ playerInfoText ]
+    h2 [id "info", class "classy"]
+        [ a [ href "#", onClick ( SwitchGameState EditMode)] 
+            [ text name ]
+        , text (" - Game #" ++ (toString gameNumber)) ]
 
 --viewHeader, viewFooter, view are definitions as they do not take any value. You can't have a function with zero arguments in Elm
 viewHeader title= 
@@ -285,18 +285,22 @@ view model =
 
 viewNameInput : Model -> Html Msg
 viewNameInput model =
-    div [ class "name-input" ]
-        [ input 
-            [ type_ "text"
-            , placeholder "who's playing?"
-            , autofocus True
-            , onInput SetNameInput
-            , value model.nameInput
-            ] 
-            []
-        , button [ onClick SaveName] [ text "Save"] 
-        , button [ onClick CancelName ] [ text "Cancel"]   
-        ]
+    case model.gameState of
+        EditMode ->
+            div [ class "name-input" ]
+                [ input 
+                    [ type_ "text"
+                    , placeholder "who's playing?"
+                    , autofocus True
+                    , onInput SetNameInput
+                    , value model.nameInput
+                    ] 
+                    []
+                , button [ onClick SaveName, disabled (String.isEmpty model.nameInput || String.length model.nameInput < 3)] [ text "Save"] 
+                , button [ onClick CancelName ] [ text "Cancel"]   
+                ]
+        Playing ->
+            text ""
 
 viewAlertMessage : Maybe String -> Html Msg
 viewAlertMessage alertMessage = 
